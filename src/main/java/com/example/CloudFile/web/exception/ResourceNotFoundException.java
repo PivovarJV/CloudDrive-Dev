@@ -1,4 +1,4 @@
-package com.example.CloudFile.exception;
+package com.example.CloudFile.web.exception;
 
 public class ResourceNotFoundException extends RuntimeException{
     public ResourceNotFoundException(String message) {

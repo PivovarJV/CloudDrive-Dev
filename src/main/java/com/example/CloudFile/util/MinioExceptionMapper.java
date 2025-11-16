@@ -1,9 +1,9 @@
 package com.example.CloudFile.util;
 
-import com.example.CloudFile.exception.ForbiddenException;
-import com.example.CloudFile.exception.ResourceConflictException;
-import com.example.CloudFile.exception.ResourceNotFoundException;
-import com.example.CloudFile.exception.StorageException;
+import com.example.CloudFile.web.exception.ForbiddenException;
+import com.example.CloudFile.web.exception.ResourceConflictException;
+import com.example.CloudFile.web.exception.ResourceNotFoundException;
+import com.example.CloudFile.web.exception.StorageException;
 import io.minio.errors.ErrorResponseException;
 import org.springframework.stereotype.Component;
 

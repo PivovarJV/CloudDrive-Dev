@@ -8,21 +8,22 @@ import lombok.*;
 import java.io.Serializable;
 
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@RequiredArgsConstructor
 @Table(name = "users", schema = "public")
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @Column(unique = true, nullable = false)
-    @NonNull
     private String login;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @NonNull
     private String password;
+
+    public User(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
 
     public UserDTO toDTO() {
         return new UserDTO(this.login);

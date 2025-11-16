@@ -1,19 +1,18 @@
-package com.example.CloudFile.services.minio.util;
+package com.example.CloudFile.services.minio;
 
 
 import com.example.CloudFile.dto.ObjectDTO;
-import com.example.CloudFile.exception.ResourceConflictException;
-import com.example.CloudFile.exception.ResourceNotFoundException;
-import com.example.CloudFile.mapper.ObjectMapper;
+import com.example.CloudFile.mapper.ObjectDTOMapper;
 import com.example.CloudFile.util.MinioExceptionMapper;
 import com.example.CloudFile.util.MinioExecutor;
 import com.example.CloudFile.util.UserPathProvider;
 import com.example.CloudFile.validation.PathValidator;
+import com.example.CloudFile.web.exception.ResourceConflictException;
+import com.example.CloudFile.web.exception.ResourceNotFoundException;
 import io.minio.*;
 import io.minio.messages.Item;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,14 +23,14 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class MinioService {
 
-    private static final Logger log = LoggerFactory.getLogger(MinioService.class);
-    private final String BUCKET = "user-files";
+    private final String BUCKET_NAME = "user-files";
     private final MinioClient minioClient;
     private final MinioExceptionMapper minioExceptionMapper;
     private final MinioExecutor executor;
-    private final ObjectMapper mapper;
+    private final ObjectDTOMapper mapper;
     private final UserPathProvider pathProvider;
 
     public void removeObject(String path) {
@@ -41,7 +40,7 @@ public class MinioService {
         try {
             minioClient.removeObject(
                     RemoveObjectArgs.builder()
-                            .bucket(BUCKET)
+                            .bucket(BUCKET_NAME)
                             .object(pathProvider.rootPath() + path)
                             .build());
             log.info("Объект по пути {} успешно удален", pathProvider.rootPath() + path);
@@ -57,7 +56,7 @@ public class MinioService {
         return executor.execute(() ->
                 minioClient.listObjects(
                 ListObjectsArgs.builder()
-                        .bucket(BUCKET)
+                        .bucket(BUCKET_NAME)
                         .prefix(pathProvider.rootPath() + path)
                         .recursive(true)
                         .build()));
@@ -69,7 +68,7 @@ public class MinioService {
         List<ObjectDTO> results = new ArrayList<>();
         Iterable<Result<Item>> resultItem = minioClient.listObjects(
                 ListObjectsArgs.builder()
-                        .bucket(BUCKET)
+                        .bucket(BUCKET_NAME)
                         .prefix(pathProvider.rootPath())
                         .recursive(true)
                         .build());
@@ -90,7 +89,7 @@ public class MinioService {
         String name = path.substring(path.lastIndexOf("/") + 1);
         StatObjectResponse stat = executor.execute(() -> minioClient.statObject(
                 StatObjectArgs.builder()
-                        .bucket(BUCKET)
+                        .bucket(BUCKET_NAME)
                         .object(pathProvider.rootPath() + path)
                         .build()));
         return new ObjectDTO(folderPath, name, stat.size(),"FILE");
@@ -100,7 +99,7 @@ public class MinioService {
         PathValidator.validate(path);
         log.info("Загрузка потока {}", path);
         return executor.execute(() -> minioClient.getObject(GetObjectArgs.builder()
-                .bucket(BUCKET)
+                .bucket(BUCKET_NAME)
                 .object(path)
                 .build()));
     }
@@ -110,7 +109,7 @@ public class MinioService {
         PathValidator.validate(pathProvider.rootPath() + path);
         executor.execute(() -> minioClient.putObject(
                 PutObjectArgs.builder()
-                        .bucket(BUCKET)
+                        .bucket(BUCKET_NAME)
                         .object(pathProvider.rootPath() + path)
                         .stream(file.getInputStream(), file.getSize(), -1)
                         .contentType(file.getContentType())
@@ -127,7 +126,7 @@ public class MinioService {
         InputStream inputStream = new ByteArrayInputStream(new byte[0]);
         executor.execute(() -> minioClient.putObject(
                 PutObjectArgs.builder()
-                        .bucket(BUCKET)
+                        .bucket(BUCKET_NAME)
                         .object(pathProvider.rootPath() + path)
                         .stream(inputStream, 0, -1)
                         .build()));
@@ -142,7 +141,7 @@ public class MinioService {
         InputStream inputStream = new ByteArrayInputStream(new byte[0]);
         executor.execute(() -> minioClient.putObject(
                 PutObjectArgs.builder()
-                        .bucket(BUCKET)
+                        .bucket(BUCKET_NAME)
                         .object(rootPath)
                         .stream(inputStream, 0, -1)
                         .build()));
@@ -156,11 +155,11 @@ public class MinioService {
         }
         executor.execute(() -> minioClient.copyObject(
                 CopyObjectArgs.builder()
-                        .bucket(BUCKET)
+                        .bucket(BUCKET_NAME)
                         .object(pathProvider.rootPath() + to)
                         .source(
                                 CopySource.builder()
-                                        .bucket(BUCKET)
+                                        .bucket(BUCKET_NAME)
                                         .object(pathProvider.rootPath() + from)
                                         .build())
                         .build()));
@@ -180,14 +179,23 @@ public class MinioService {
 
     public List<ObjectDTO> listObjects(String folder) {
         log.info("Начало загрузки списка файлов находящихся по пути: {}", pathProvider.rootPath() + folder);
-        PathValidator.validate(pathProvider.rootPath() + folder);
+        if (!folderExists(folder)) {
+            log.warn("Несуществующий путь: {}", folder);
+            throw new ResourceNotFoundException("Несуществующий путь");
+        }
+        //PathValidator.validate(pathProvider.rootPath() + folder);
         Iterable<Result<Item>> results = executor.execute(() ->
                 minioClient.listObjects(
                         ListObjectsArgs.builder()
-                                .bucket(BUCKET)
+                                .bucket(BUCKET_NAME)
                                 .prefix(pathProvider.rootPath() + folder)
                                 .build()));
         log.info("Успешная загрузка списка файлов находящихся по пути: {}", pathProvider.rootPath() + folder);
         return mapper.mapResultsToDTOs(results, folder, pathProvider.rootPath());
+    }
+
+    private boolean folderExists(String path) {
+        Iterable<Result<Item>> items = listFolderContent(path);
+        return items.iterator().hasNext();
     }
 }

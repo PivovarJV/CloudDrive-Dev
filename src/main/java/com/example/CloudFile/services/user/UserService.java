@@ -34,14 +34,4 @@ public class UserService {
     public boolean existsByLogin(String login) {
         return userRepository.existsByLogin(login);
     }
-
-    public User getProfile(HttpSession session) {
-        Integer idUser = (Integer) session.getAttribute("userId");
-        if (idUser == null) {
-            throw new IllegalStateException("Данного UserId нет в session");
-        }
-        return userById(idUser)
-                .orElseThrow(() -> new NoSuchElementException(
-                        String.format("Пользователь с id %s не найден", idUser)));
-    }
 }

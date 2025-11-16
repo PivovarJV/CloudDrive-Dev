@@ -1,14 +1,13 @@
 package com.example.CloudFile.services.user;
 
-import com.example.CloudFile.exception.UserConflictException;
+import com.example.CloudFile.web.exception.UserConflictException;
 import com.example.CloudFile.models.CustomUserDetails;
 import com.example.CloudFile.models.User;
-import com.example.CloudFile.services.minio.util.MinioService;
+import com.example.CloudFile.services.minio.MinioService;
 import com.example.CloudFile.validation.CredentialsValidator;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -20,9 +19,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthService {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
     private final UserService userServices;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;

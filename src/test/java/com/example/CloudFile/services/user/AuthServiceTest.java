@@ -1,8 +1,8 @@
 package com.example.CloudFile.services.user;
 
-import com.example.CloudFile.exception.UserConflictException;
+import com.example.CloudFile.web.exception.UserConflictException;
 import com.example.CloudFile.models.User;
-import com.example.CloudFile.services.minio.util.MinioService;
+import com.example.CloudFile.services.minio.MinioService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -22,9 +22,8 @@ class AuthServiceTest extends AbstractIntegrationTest {
     private AuthService authService;
     @Autowired
     private UserService userService;
-
     @MockBean
-    MinioService minioService;
+    private MinioService minioService;
 
     @Test
     void registrationUser() {

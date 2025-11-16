@@ -1,14 +1,13 @@
 package com.example.CloudFile.services.minio.manager;
 
 import com.example.CloudFile.dto.ObjectDTO;
-import com.example.CloudFile.services.minio.util.MinioService;
+import com.example.CloudFile.services.minio.MinioService;
 import com.example.CloudFile.util.MinioExecutor;
 import com.example.CloudFile.util.UserPathProvider;
 import io.minio.Result;
 import io.minio.messages.Item;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -18,9 +17,9 @@ import static com.example.CloudFile.validation.PathValidator.validate;
 
 @Service
 @RequiredArgsConstructor
-public class CopyManager {
+@Slf4j
+public class CopyService {
 
-    private static final Logger log = LoggerFactory.getLogger(CopyManager.class);
     private final MinioService minioService;
     private final UserPathProvider pathProvider;
     private final MinioExecutor executor;

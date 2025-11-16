@@ -20,6 +20,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final int BCRYPT_STRENGTH = 8;
     private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
@@ -60,6 +61,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(8);
+        return new BCryptPasswordEncoder(BCRYPT_STRENGTH);
     }
 }

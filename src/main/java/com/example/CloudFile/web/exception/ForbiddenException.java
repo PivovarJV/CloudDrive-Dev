@@ -1,4 +1,4 @@
-package com.example.CloudFile.exception;
+package com.example.CloudFile.web.exception;
 
 public class ForbiddenException extends RuntimeException{
     public ForbiddenException(String message) {

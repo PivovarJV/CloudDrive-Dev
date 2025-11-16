@@ -1,4 +1,4 @@
-package com.example.CloudFile.exception;
+package com.example.CloudFile.web.exception;
 
 public class InvalidFileException extends RuntimeException {
     public InvalidFileException(String message) {

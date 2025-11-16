@@ -1,4 +1,4 @@
-package com.example.CloudFile.exception;
+package com.example.CloudFile.web.exception;
 
 public class InvalidPathException extends RuntimeException{
     public InvalidPathException(String message) {

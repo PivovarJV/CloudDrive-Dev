@@ -1,25 +1,21 @@
-package com.example.CloudFile.controller;
+package com.example.CloudFile.web.controller.api;
 
 import com.example.CloudFile.dto.UserDTO;
-import com.example.CloudFile.services.user.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
-@RequiredArgsConstructor
-@RestController
 @Tag(name = "Auth API", description = "Операции авторизации и регистрации")
 @RequestMapping("/api/v1/auth")
-public class AuthController {
-
-    private final AuthService authService;
+public interface AuthApi {
 
     @Operation(summary = "Регистрация")
     @ApiResponses(value = {
@@ -29,13 +25,11 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Неизвестная ошибка")
     })
     @PostMapping("/sign-up")
-    public ResponseEntity<UserDTO> registration(
+    @ResponseStatus(HttpStatus.CREATED)
+    UserDTO registration(
             @Parameter(description = "DTO с username и password")
             @RequestBody UserDTO userDTO,
-            HttpSession session) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(authService.registrationUser(userDTO.getUsername(), userDTO.getPassword(), session).toDTO());
-    }
+            HttpSession session);
 
     @Operation(summary = "Авторизация")
     @ApiResponses(value = {
@@ -45,11 +39,8 @@ public class AuthController {
             @ApiResponse(responseCode = "500", description = "Неизвестная ошибка")
     })
     @PostMapping("/sign-in")
-    public ResponseEntity<UserDTO> login(
-            @Parameter(description = "DTO с username и password")
-            @RequestBody UserDTO userDTO,
-            HttpSession session) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(authService.loginUser(userDTO.getUsername(), userDTO.getPassword(), session).toDTO());
-    }
+   UserDTO login(
+           @Parameter(description = "DTO с username и password")
+           @RequestBody UserDTO userDTO,
+           HttpSession session);
 }

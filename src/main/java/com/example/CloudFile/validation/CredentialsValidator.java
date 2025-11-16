@@ -1,6 +1,6 @@
 package com.example.CloudFile.validation;
 
-import com.example.CloudFile.exception.InvalidCredentialsException;
+import com.example.CloudFile.web.exception.InvalidCredentialsException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
