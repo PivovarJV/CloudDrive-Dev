@@ -2,7 +2,6 @@ package com.example.CloudFile.services.minio.manager;
 
 import com.example.CloudFile.services.minio.MinioService;
 import com.example.CloudFile.util.UserPathProvider;
-import com.example.CloudFile.validation.PathValidator;
 import io.minio.Result;
 import io.minio.messages.Item;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +28,6 @@ public class DownloadService {
     private final UserPathProvider pathProvider;
 
     public ResponseEntity<StreamingResponseBody> downloadDirectory(String path) {
-        PathValidator.validate(path);
         String trimmedPath = path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
         int lastSlash = trimmedPath.lastIndexOf("/");
         String archiveName = trimmedPath.substring(lastSlash + 1) + ".zip";
@@ -56,7 +54,6 @@ public class DownloadService {
 
     public ResponseEntity<StreamingResponseBody> downloadFile(String path) {
         log.info("Начало скачивание файла по пути: {}", pathProvider.rootPath() + path);
-        PathValidator.validate(path);
         StreamingResponseBody responseBody = outputStream -> {
             InputStream inputStream = minioService.getObject(pathProvider.rootPath() + path);
             StreamUtils.copy(inputStream, outputStream);

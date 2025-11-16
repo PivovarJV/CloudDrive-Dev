@@ -6,7 +6,6 @@ import com.example.CloudFile.mapper.ObjectDTOMapper;
 import com.example.CloudFile.util.MinioExceptionMapper;
 import com.example.CloudFile.util.MinioExecutor;
 import com.example.CloudFile.util.UserPathProvider;
-import com.example.CloudFile.validation.PathValidator;
 import com.example.CloudFile.web.exception.ResourceConflictException;
 import com.example.CloudFile.web.exception.ResourceNotFoundException;
 import io.minio.*;
@@ -35,7 +34,6 @@ public class MinioService {
 
     public void removeObject(String path) {
         log.info("Удаление объекта по пути: {}", pathProvider.rootPath() + path);
-        PathValidator.validate(path);
         statObject(path);
         try {
             minioClient.removeObject(
@@ -52,7 +50,6 @@ public class MinioService {
 
     public Iterable<Result<Item>> listFolderContent(String path) {
         log.info("Загрузка списка файлов по пути {}", pathProvider.rootPath() + path);
-        PathValidator.validate(pathProvider.rootPath() + path);
         return executor.execute(() ->
                 minioClient.listObjects(
                 ListObjectsArgs.builder()
@@ -64,7 +61,6 @@ public class MinioService {
 
     public List<ObjectDTO> search(String query) {
         log.info("Начало поиска по запросу: {}", query);
-        PathValidator.validate(query);
         List<ObjectDTO> results = new ArrayList<>();
         Iterable<Result<Item>> resultItem = minioClient.listObjects(
                 ListObjectsArgs.builder()
@@ -84,7 +80,6 @@ public class MinioService {
 
     public ObjectDTO statObject(String path)  {
         log.info("Информация объекта находящегося по пути {}", pathProvider.rootPath() + path);
-        PathValidator.validate(pathProvider.rootPath() + path);
         String folderPath = path.substring(0, path.lastIndexOf("/") + 1);
         String name = path.substring(path.lastIndexOf("/") + 1);
         StatObjectResponse stat = executor.execute(() -> minioClient.statObject(
@@ -96,7 +91,6 @@ public class MinioService {
     }
 
     public InputStream getObject(String path) {
-        PathValidator.validate(path);
         log.info("Загрузка потока {}", path);
         return executor.execute(() -> minioClient.getObject(GetObjectArgs.builder()
                 .bucket(BUCKET_NAME)
@@ -106,7 +100,6 @@ public class MinioService {
 
     public ObjectDTO putObject(String path, MultipartFile file)  {
         log.info("Начало загрузки файла: {} в путь {}", file.getOriginalFilename(), pathProvider.rootPath() + path);
-        PathValidator.validate(pathProvider.rootPath() + path);
         executor.execute(() -> minioClient.putObject(
                 PutObjectArgs.builder()
                         .bucket(BUCKET_NAME)
@@ -119,7 +112,6 @@ public class MinioService {
 
     public ObjectDTO createFolder(String path) {
         log.info("Создание папки по пути: {}", pathProvider.rootPath() + path);
-        PathValidator.validate(pathProvider.rootPath() + path);
         if (exists(path)) {
             throw new ResourceConflictException("Папка уже существует");
         }
@@ -137,7 +129,6 @@ public class MinioService {
     public void createRootFolder(int id) {
         String rootPath = "user-" + id + "-files/";
         log.info("Создание корневой папки папки по пути: {}", rootPath);
-        PathValidator.validate(rootPath);
         InputStream inputStream = new ByteArrayInputStream(new byte[0]);
         executor.execute(() -> minioClient.putObject(
                 PutObjectArgs.builder()
@@ -149,7 +140,6 @@ public class MinioService {
 
     public ObjectDTO copyObject(String from, String to)  {
         log.info("Копирование объекта из {} в {}", pathProvider.rootPath() + from, pathProvider.rootPath() +to);
-        PathValidator.validate(pathProvider.rootPath() + from, pathProvider.rootPath() + to);
         if (exists(to)) {
             throw new ResourceConflictException("Файл уже существует");
         }
@@ -183,7 +173,6 @@ public class MinioService {
             log.warn("Несуществующий путь: {}", folder);
             throw new ResourceNotFoundException("Несуществующий путь");
         }
-        //PathValidator.validate(pathProvider.rootPath() + folder);
         Iterable<Result<Item>> results = executor.execute(() ->
                 minioClient.listObjects(
                         ListObjectsArgs.builder()
