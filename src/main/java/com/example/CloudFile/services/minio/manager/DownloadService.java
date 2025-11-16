@@ -1,13 +1,12 @@
 package com.example.CloudFile.services.minio.manager;
 
-import com.example.CloudFile.services.minio.util.MinioService;
+import com.example.CloudFile.services.minio.MinioService;
 import com.example.CloudFile.util.UserPathProvider;
 import com.example.CloudFile.validation.PathValidator;
 import io.minio.Result;
 import io.minio.messages.Item;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -23,9 +22,9 @@ import java.util.zip.ZipOutputStream;
 
 @Service
 @RequiredArgsConstructor
-public class DownloadManager {
+@Slf4j
+public class DownloadService {
 
-    private static final Logger log = LoggerFactory.getLogger(DownloadManager.class);
     private final MinioService minioService;
     private final UserPathProvider pathProvider;
 

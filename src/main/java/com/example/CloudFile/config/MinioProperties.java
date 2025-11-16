@@ -1,16 +1,18 @@
 package com.example.CloudFile.config;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
 @ConfigurationProperties(prefix = "minio")
 @Getter
-@Setter
 public class MinioProperties {
-    private String endpoint;
-    private String accessKey;
-    private String secretKey;
+    private final String endpoint;
+    private final String accessKey;
+    private final String secretKey;
+
+    public MinioProperties(String endpoint, String accessKey, String secretKey) {
+        this.endpoint = endpoint;
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
+    }
 }

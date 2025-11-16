@@ -1,6 +1,6 @@
 package com.example.CloudFile.validation;
 
-import com.example.CloudFile.exception.InvalidFileException;
+import com.example.CloudFile.web.exception.InvalidFileException;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;

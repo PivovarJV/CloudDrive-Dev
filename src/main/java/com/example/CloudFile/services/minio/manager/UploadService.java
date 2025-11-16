@@ -1,14 +1,13 @@
 package com.example.CloudFile.services.minio.manager;
 
 import com.example.CloudFile.dto.ObjectDTO;
-import com.example.CloudFile.exception.ResourceConflictException;
-import com.example.CloudFile.services.minio.util.MinioService;
+import com.example.CloudFile.services.minio.MinioService;
 import com.example.CloudFile.util.UserPathProvider;
 import com.example.CloudFile.validation.FileValidator;
 import com.example.CloudFile.validation.PathValidator;
+import com.example.CloudFile.web.exception.ResourceConflictException;
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.concurrent.DelegatingSecurityContextExecutorService;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,11 +18,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+
+@Slf4j
 @RequiredArgsConstructor
 @Service
-public class UploadManager {
+public class UploadService {
 
-    private static final Logger log = LoggerFactory.getLogger(UploadManager.class);
     private final MinioService minioService;
     private final UserPathProvider pathProvider;
 

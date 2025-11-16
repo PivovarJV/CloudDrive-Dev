@@ -1,4 +1,4 @@
-package com.example.CloudFile.controller;
+package com.example.CloudFile.web.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;

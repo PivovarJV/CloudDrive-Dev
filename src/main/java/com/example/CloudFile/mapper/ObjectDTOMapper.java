@@ -12,7 +12,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Component
-public class ObjectMapper {
+public class ObjectDTOMapper {
 
     private final MinioExecutor executor;
 
