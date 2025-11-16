@@ -13,8 +13,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.CloudFile.validation.PathValidator.validate;
-
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -25,7 +23,6 @@ public class CopyService {
     private final MinioExecutor executor;
 
     public List<ObjectDTO> copy(String from, String to) {
-        validate(from, to);
         List<ObjectDTO> list = new ArrayList<>();
 
         if (from.endsWith("/")) {

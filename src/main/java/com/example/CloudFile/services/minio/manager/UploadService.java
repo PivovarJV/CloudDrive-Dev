@@ -4,7 +4,6 @@ import com.example.CloudFile.dto.ObjectDTO;
 import com.example.CloudFile.services.minio.MinioService;
 import com.example.CloudFile.util.UserPathProvider;
 import com.example.CloudFile.validation.FileValidator;
-import com.example.CloudFile.validation.PathValidator;
 import com.example.CloudFile.web.exception.ResourceConflictException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +28,6 @@ public class UploadService {
 
     public List<ObjectDTO> putObject(String path, MultipartFile[] files) {
         log.info("Начало загрузки файлов: {} в путь '{}'", files.length, pathProvider.rootPath() + path);
-        PathValidator.validate(pathProvider.rootPath() + path);
         FileValidator.validate(files);
 
         for (MultipartFile file : files) {
